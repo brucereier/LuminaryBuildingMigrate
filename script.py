@@ -10,7 +10,7 @@ pg_conn = psycopg2.connect(
     dbname="polaris", 
     user="postgres", 
     password="postgres", 
-    host="postgresql"
+    host="postgresql.dept-polaris.svc.cluster.local"
 )
 pg_cur = pg_conn.cursor()
 
