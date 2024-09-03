@@ -22,7 +22,7 @@ def get_campus_id(campus_name, cursor):
         return result[0]
     else:
         # Insert new campus and return its ID
-        cursor.execute("INSERT INTO campus (name) VALUES (%s) RETURNING campus_id", (campus_name,))
+        cursor.execute("INSERT INTO campus (full_name) VALUES (%s) RETURNING campus_id", (campus_name,))
         return cursor.fetchone()[0]
 
 # Iterate over each entry in the JSON data
