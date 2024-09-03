@@ -1,24 +1,29 @@
-import os
 import json
 import psycopg2
 
-# Path to the marker file
-marker_file = "/app/migration_marker.txt"
+# Connect to PostgreSQL
+pg_conn = psycopg2.connect(
+    dbname="postgres", 
+    user="postgres", 
+    password="postgres", 
+    host="postgresql.dept-polaris.svc.cluster.local"
+)
+pg_cur = pg_conn.cursor()
 
-# Check if the marker file exists
-if not os.path.exists(marker_file):
+# Check if the building table already contains data
+pg_cur.execute("SELECT COUNT(*) FROM building")
+building_count = pg_cur.fetchone()[0]
+
+# Check if the location table already contains data
+pg_cur.execute("SELECT COUNT(*) FROM location")
+location_count = pg_cur.fetchone()[0]
+
+if building_count > 0 or location_count > 0:
+    print("Data already exists in the building or location table. Exiting.")
+else:
     # Load JSON data from file
     with open('data.json') as f:
         data = json.load(f)
-
-    # Connect to PostgreSQL
-    pg_conn = psycopg2.connect(
-        dbname="postgres", 
-        user="postgres", 
-        password="postgres", 
-        host="postgresql.dept-polaris.svc.cluster.local"
-    )
-    pg_cur = pg_conn.cursor()
 
     def get_campus_id(campus_name, cursor):
         # Check if campus exists
@@ -67,11 +72,5 @@ if not os.path.exists(marker_file):
     # Close the connections
     pg_cur.close()
     pg_conn.close()
-
-    # Create the marker file to indicate that the migration has run
-    with open(marker_file, 'w') as f:
-        f.write("Migration completed")
     
     print("Migration completed successfully.")
-else:
-    print("Migration has already been run. Exiting.")
