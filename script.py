@@ -16,7 +16,7 @@ pg_cur = pg_conn.cursor()
 
 def get_campus_id(campus_name, cursor):
     # Check if campus exists
-    cursor.execute("SELECT campus_id FROM campus WHERE name = %s", (campus_name,))
+    cursor.execute("SELECT campus_id FROM campus WHERE full_name = %s", (campus_name,))
     result = cursor.fetchone()
     if result:
         return result[0]
