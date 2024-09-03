@@ -11,4 +11,4 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Run the script when the container launches
-CMD ["python", "migrate_json_to_postgres.py"]
+CMD ["python", "script.py"]
