@@ -7,7 +7,7 @@ with open('data.json') as f:
 
 # Connect to PostgreSQL
 pg_conn = psycopg2.connect(
-    dbname="polaris", 
+    dbname="postgres", 
     user="postgres", 
     password="postgres", 
     host="postgresql.dept-polaris.svc.cluster.local"
