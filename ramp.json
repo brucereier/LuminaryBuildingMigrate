@@ -1,0 +1,156 @@
+[
+    {
+        "_id": "6436b5a2aa69d764fde1515d",
+        "latitude": 35.909468,
+        "longitude": -79.053192,
+        "building": "625e43d481807ff3dc5f1615",
+        "__v": 0
+    },
+    {
+        "_id": "6436ec493510517e79b4ef9e",
+        "latitude": 35.912595,
+        "longitude": -79.055162,
+        "building": "625e43d481807ff3dc5f15f9",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a4f",
+        "latitude": 35.909658,
+        "longitude": -79.048164,
+        "building": "625e43d481807ff3dc5f1624",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a42",
+        "latitude": 35.913795,
+        "longitude": -79.053059,
+        "building": "625e42091ef831a57041ff84",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a3f",
+        "latitude": 35.912306,
+        "longitude": -79.053063,
+        "building": "625e43d481807ff3dc5f15ef",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a3d",
+        "latitude": 35.911293,
+        "longitude": -79.053532,
+        "building": "625e43d481807ff3dc5f1618",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a41",
+        "latitude": 35.912506,
+        "longitude": -79.053401,
+        "building": "625e43d481807ff3dc5f15ef",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a48",
+        "latitude": 35.911508,
+        "longitude": -79.051438,
+        "building": "625e43d481807ff3dc5f15e6",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a3c",
+        "latitude": 35.911375,
+        "longitude": -79.054119,
+        "building": "625e4021000fa59c306e2bbe",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a43",
+        "latitude": 35.913964,
+        "longitude": -79.051649,
+        "building": "625e43d481807ff3dc5f15e8",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a45",
+        "latitude": 35.914121,
+        "longitude": -79.050143,
+        "building": "625e43d481807ff3dc5f160f",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a4b",
+        "latitude": 35.911138,
+        "longitude": -79.050041,
+        "building": "625e43d481807ff3dc5f15d9",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a47",
+        "latitude": 35.909103,
+        "longitude": -79.052972,
+        "building": "625e43d481807ff3dc5f1607",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a44",
+        "latitude": 35.913673,
+        "longitude": -79.050883,
+        "building": "625e43d481807ff3dc5f160f",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a4c",
+        "latitude": 35.910325,
+        "longitude": -79.049755,
+        "building": "625e43d481807ff3dc5f15d3",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a40",
+        "latitude": 35.912232,
+        "longitude": -79.053259,
+        "building": "625e43d481807ff3dc5f15ef",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a46",
+        "latitude": 35.910668,
+        "longitude": -79.053388,
+        "building": "625e43d481807ff3dc5f160c",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a4e",
+        "latitude": 35.911138,
+        "longitude": -79.049078,
+        "building": "625e43d481807ff3dc5f15ff",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a49",
+        "latitude": 35.911439,
+        "longitude": -79.051631,
+        "building": "625e43d481807ff3dc5f15e6",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a4a",
+        "latitude": 35.911445,
+        "longitude": -79.050192,
+        "building": "625e43d481807ff3dc5f1616",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a4d",
+        "latitude": 35.910327,
+        "longitude": -79.049001,
+        "building": "625e43d481807ff3dc5f15e9",
+        "__v": 0
+    },
+    {
+        "_id": "660a291d413dc3fd78983a3e",
+        "latitude": 35.911332,
+        "longitude": -79.053894,
+        "building": "625e43d481807ff3dc5f1618",
+        "__v": 0
+    }
+]

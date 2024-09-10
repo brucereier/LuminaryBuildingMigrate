@@ -10,67 +10,120 @@ pg_conn = psycopg2.connect(
 )
 pg_cur = pg_conn.cursor()
 
-# Check if the building table already contains data
-pg_cur.execute("SELECT COUNT(*) FROM building")
-building_count = pg_cur.fetchone()[0]
+# Load building data from data.json to create a lookup of MongoDB ID to PostgreSQL building ID
+with open('data.json') as f:
+    buildings_data = json.load(f)
 
-# Check if the location table already contains data
-pg_cur.execute("SELECT COUNT(*) FROM location")
-location_count = pg_cur.fetchone()[0]
+# Create a lookup dictionary to map MongoDB _id to building names
+building_lookup = {building['_id']: building['name'] for building in buildings_data}
 
-if building_count > 0 or location_count > 0:
-    print("Data already exists in the building or location table. Exiting.")
-else:
-    # Load JSON data from file
-    with open('data.json') as f:
-        data = json.load(f)
+def get_building_id_by_name(building_name, cursor):
+    # Look up building_id by name in the PostgreSQL building table
+    cursor.execute("SELECT building_id FROM building WHERE name = %s", (building_name,))
+    result = cursor.fetchone()
+    if result:
+        return result[0]
+    else:
+        print(f"Building with name {building_name} not found.")
+        return None
 
-    def get_campus_id(campus_name, cursor):
-        # Check if campus exists
-        cursor.execute("SELECT campus_id FROM campus WHERE full_name = %s", (campus_name,))
-        result = cursor.fetchone()
-        if result:
-            return result[0]
-        else:
-            # Insert new campus and return its ID
-            cursor.execute("INSERT INTO campus (full_name) VALUES (%s) RETURNING campus_id", (campus_name,))
-            return cursor.fetchone()[0]
+# Migrate Ramps
+def migrate_ramps():
+    # Check if the ramp table already contains data
+    pg_cur.execute("SELECT COUNT(*) FROM ramp")
+    ramp_count = pg_cur.fetchone()[0]
 
-    # Iterate over each entry in the JSON data
-    for doc in data:
-        # Extract fields from JSON
-        building_name = doc['name']
-        full_name = doc['name']
-        abbreviation = doc.get('abbreviation', None)
-        latitude = doc.get('defaultLatitude', None)
-        longitude = doc.get('defaultLongitude', None)
-        address = doc.get('address', None)
-        campus_name = doc.get('campus', None)
+    if ramp_count > 0:
+        print("Data already exists in the ramp table. Skipping ramp migration.")
+        return
 
-        # Get or create campus_id
-        campus_id = get_campus_id(campus_name, pg_cur)
+    # Load ramps data from file
+    with open('ramps.json') as f:
+        ramps = json.load(f)
 
-        # Insert into building table
-        pg_cur.execute(
-            "INSERT INTO building (name) VALUES (%s) RETURNING building_id", 
-            (building_name,)
-        )
-        building_id = pg_cur.fetchone()[0]
-
-        # Insert into location table
+    for ramp in ramps:
+        old_building_id = ramp.get('building', None)
+        building_name = building_lookup.get(old_building_id, None)
+        building_id = None
+        if building_name:
+            building_id = get_building_id_by_name(building_name, pg_cur)
+        
+        # Insert into the ramp table
         pg_cur.execute(
             """
-            INSERT INTO location (full_name, abbreviation, defaultLatitude, defaultLongitude, geo_address, campus_id) 
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO ramp (latitude, longitude, building) 
+            VALUES (%s, %s, %s) RETURNING ramp_id
             """,
-            (full_name, abbreviation, latitude, longitude, address, campus_id)
+            (ramp['latitude'], ramp['longitude'], building_id)
         )
+        ramp_id = pg_cur.fetchone()[0]
+        print(f"Ramp {ramp['_id']} inserted as {ramp_id}")
 
-    # Commit the transactions
-    pg_conn.commit()
+# Migrate Doors and Associate with Ramps
+def migrate_doors_and_associate_ramps():
+    # Check if the door table already contains data
+    pg_cur.execute("SELECT COUNT(*) FROM door")
+    door_count = pg_cur.fetchone()[0]
 
-    # Close the connections
-    pg_cur.close()
-    pg_conn.close()
-    
-    print("Migration completed successfully.")
+    if door_count > 0:
+        print("Data already exists in the door table. Skipping door migration.")
+        return
+
+    # Check if the DoorsAndRamps table already contains data
+    pg_cur.execute("SELECT COUNT(*) FROM DoorsAndRamps")
+    doors_and_ramps_count = pg_cur.fetchone()[0]
+
+    if doors_and_ramps_count > 0:
+        print("Data already exists in the DoorsAndRamps table. Skipping door-ramp associations.")
+        return
+
+    # Load doors data from file
+    with open('doors.json') as f:
+        doors = json.load(f)
+
+    for door in doors:
+        old_building_id = door.get('building', None)
+        building_name = building_lookup.get(old_building_id, None)
+        building_id = None
+        if building_name:
+            building_id = get_building_id_by_name(building_name, pg_cur)
+
+        # Insert into the door table
+        pg_cur.execute(
+            """
+            INSERT INTO door (latitude, longitude, building_id, is_emergency, is_service, is_indoor) 
+            VALUES (%s, %s, %s, %s, %s, %s) RETURNING door_id
+            """,
+            (door['latitude'], door['longitude'], building_id, door.get('emergency', False), 
+             door.get('service', False), door.get('entrance', False))
+        )
+        door_id = pg_cur.fetchone()[0]
+        print(f"Door {door['_id']} inserted as {door_id}")
+
+        # If the door has associated ramps, insert those into DoorsAndRamps table
+        for ramp_mongo_id in door.get('ramps', []):
+            # Look up ramp using the old MongoDB ID (assuming ramp_id was inserted using this ID)
+            pg_cur.execute("SELECT ramp_id FROM ramp WHERE ramp_id = %s", (ramp_mongo_id,))
+            result = pg_cur.fetchone()
+            if result:
+                ramp_id = result[0]
+                pg_cur.execute(
+                    "INSERT INTO DoorsAndRamps (door_id, ramp_id) VALUES (%s, %s)", 
+                    (door_id, ramp_id)
+                )
+                print(f"Associated door {door_id} with ramp {ramp_id}")
+
+# Migrate ramps
+migrate_ramps()
+
+# Migrate doors and associate them with ramps
+migrate_doors_and_associate_ramps()
+
+# Commit the transactions
+pg_conn.commit()
+
+# Close the connections
+pg_cur.close()
+pg_conn.close()
+
+print("Migration completed successfully.")
